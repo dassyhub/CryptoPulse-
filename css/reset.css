@@ -1,0 +1,70 @@
+/* CSS Reset - Normalize browser inconsistencies */
+/* This ensures consistent styling across Chrome, Firefox, Safari, Edge */
+
+*, *::before, *::after {
+    box-sizing: border-box;  /* Padding and border included in element's total width/height */
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;  /* Base font size for rem calculations */
+    -webkit-font-smoothing: antialiased;  /* Smoother fonts on macOS/iOS */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg);
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;  /* Prevent images from overflowing containers */
+}
+
+input, button, textarea, select {
+    font: inherit;  /* Inherit font family from body */
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+/* Remove default focus outlines, we'll add custom ones */
+:focus {
+    outline: none;
+}
+
+/* Custom focus visible for accessibility */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Hide elements visually but keep for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

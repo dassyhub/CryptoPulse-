@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoPulse | Professional Crypto Tracker</title>
+    <meta name="description" content="CryptoPulse — a professional cryptocurrency price tracker with real-time data, interactive charts, and paper trading simulation. Built with vanilla HTML, CSS, and JavaScript.">        
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>     <!-- Chart.js for price charts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <span class="logo-icon">📈</span>
+                <span class="logo-text">CryptoPulse</span>
+            </div>
+
+            <!-- Search Bar in Nav -->
+            <div class="search-container nav-search">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search coins..." autocomplete="off">
+                    <button id="clear-search" class="clear-btn hidden">✕</button>
+                </div>
+            </div>
+
+            <div class="nav-meta">
+                <span class="nav-live-dot"></span>
+                <span class="nav-live-label">Live Prices</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="page-layout">
+
+            <!-- ==================== LEFT: PORTFOLIO SIDEBAR ==================== -->
+            <aside class="portfolio-sidebar">
+
+                <!-- Balance Card -->
+                <div class="sidebar-balance-card">
+                    <div class="balance-title-row">
+                        <span class="sidebar-balance-subtitle">Est. Total Value</span>
+                        <button id="toggle-balance" class="btn-icon-small" title="Hide/Show Balance">👁</button>
+                    </div>
+                    <div class="sidebar-balance-amount" id="total-balance">$10,000.00</div>
+
+                    <!-- Secondary balance -->
+                    <div class="sidebar-balance-header">
+                        <span class="sidebar-balance-tag" id="cash-balance-tag">Cash: $10,000.00</span>
+                    </div>
+                    <div class="sidebar-balance-row">
+                        <span id="total-change" class="sidebar-balance-change">+0.00%</span>
+                    </div>
+                </div>
+
+                <!-- Holdings -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Holdings</h3>
+                    <div id="holdings-list" class="sidebar-holdings"></div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Recent Transactions</h3>
+                    <div id="transaction-list" class="sidebar-transactions"></div>
+                </div>
+
+                <!-- Allocation Chart -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Allocation</h3>
+                    <div class="sidebar-chart-wrap">
+                        <canvas id="portfolio-chart"></canvas>
+                        <div id="portfolio-chart-empty" class="sidebar-chart-empty">
+                            <span>No holdings yet</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- ==================== RIGHT: MARKET PANEL ==================== -->
+            <div class="market-panel">
+
+                <!-- FAVORITES SECTION -->
+                <div id="favorites-section" class="favorites-section hidden"></div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="loading-grid"></div>
+
+                <!-- Coin Grid -->
+                <div id="coin-grid" class="coin-grid hidden"></div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state hidden">
+                    <span class="empty-icon">🔍</span>
+                    <h3>No coins found</h3>
+                    <p>Try a different search term</p>
+                    <button id="reset-search" class="btn btn-primary">Clear Search</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- COIN DETAIL MODAL -->
+    <div id="coin-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close">✕</button>
+            
+            <div class="modal-header">
+                <img id="modal-icon" src="" alt="">
+                <div class="modal-title">
+                    <h2 id="modal-name">Bitcoin</h2>
+                    <span id="modal-symbol">BTC</span>
+                </div>
+            </div>
+            
+            <div class="modal-price">
+                <span id="modal-price">$67,420.00</span>
+                <span id="modal-change" class="change-badge">+2.4%</span>
+            </div>
+            
+            <!-- Chart Timeframe Toggle -->
+            <div class="chart-controls">
+                <button class="timeframe-btn active" data-days="7">7D</button>
+                <button class="timeframe-btn" data-days="30">30D</button>
+                <button class="timeframe-btn" data-days="365">1Y</button>
+            </div>
+            
+            <!-- Price Chart Canvas -->
+            <div class="chart-wrapper">
+                <canvas id="price-chart"></canvas>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Market Cap</span>
+                    <span id="modal-marketcap" class="stat-value">$1.3T</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Volume (24h)</span>
+                    <span id="modal-volume" class="stat-value">$28B</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Circulating Supply</span>
+                    <span id="modal-supply" class="stat-value">19.6M BTC</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">All-Time High</span>
+                    <span id="modal-ath" class="stat-value">$73,000</span>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="modal-actions">
+                <button id="btn-buy" class="btn btn-success">Buy</button>
+                <button id="btn-sell" class="btn btn-danger">Sell</button>
+                <button id="btn-favorite" class="btn btn-icon">☆</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRADE MODAL (Buy/Sell) -->
+    <div id="trade-modal" class="modal modal-small hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h3 id="trade-title">Buy Bitcoin</h3>
+            <div id="trade-available-balance" style="font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-4);">Available: $0.00</div>
+            <div class="trade-form">
+                <div class="input-group">
+                    <label>Amount (USD)</label>
+                    <input type="number" id="trade-amount" placeholder="0.00" min="0" step="0.01">
+                </div>
+                <div class="trade-preview">
+                    <span>You will receive:</span>
+                    <span id="trade-receive">0.00000 BTC</span>
+                </div>
+                <button id="confirm-trade" class="btn btn-primary">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/config.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/portfolio.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
